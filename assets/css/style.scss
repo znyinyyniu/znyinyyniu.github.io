@@ -18,3 +18,52 @@ header h1:before {
     float: left;
     width: 200px;
 }
+
+.container{
+	max-width:800px;
+}
+
+#toc {
+    top: 0px;
+    right: 0px;
+    height: 100%;
+    position: fixed;
+    width: 200px;
+    color: #fff;
+	padding-top:110px;
+}
+
+#toc ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#toc li {
+    padding: 5px 10px;
+	line-height:1;
+}
+
+#toc li:before {
+	color:#b5e853;
+	margin:0;
+	content:"";
+}
+
+#toc a {
+	color:#fff;
+    text-decoration: none;
+}
+
+#toc .toc-h2 {
+    padding-left: 25px;
+}
+
+#toc .toc-h3 {
+    padding-left: 35px;
+}
+
+#toc .toc-active {
+    background: #336699;
+    box-shadow: inset -5px 0px 10px -5px #000;
+}
