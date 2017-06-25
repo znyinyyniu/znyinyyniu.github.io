@@ -7,20 +7,21 @@ header h1:before {
     content: "";
 }
 
-.post-preview a{
+.post-preview a {
     text-decoration: none;
 }
 
-.pager li:before{
+.pager li:before {
     content: "";
 }
-.pager li{
+
+.pager li {
     float: left;
     width: 200px;
 }
 
-.container{
-	max-width:800px;
+.container {
+    max-width: 800px;
 }
 
 #toc {
@@ -30,7 +31,7 @@ header h1:before {
     position: fixed;
     width: 200px;
     color: #fff;
-	padding-top:110px;
+    padding-top: 150px;
 }
 
 #toc ul {
@@ -41,17 +42,17 @@ header h1:before {
 
 #toc li {
     padding: 5px 10px;
-	line-height:1;
+    line-height: 1;
 }
 
 #toc li:before {
-	color:#b5e853;
-	margin:0;
-	content:"";
+    color: #b5e853;
+    margin: 0;
+    content: "";
 }
 
 #toc a {
-	color:#fff;
+    color: #fff;
     text-decoration: none;
 }
 
