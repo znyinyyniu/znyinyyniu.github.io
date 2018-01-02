@@ -259,6 +259,33 @@ date: 2017-12-31
 
 3. 参考资料：[信任安全值](https://www.angular.cn/guide/security#bypass-security-apis)
 
+# 如何在子组件中调用父组件的属性或方法
+
+1. 有时候，我们需要在子组件中调用父组件的属性或方法。这也是可以作到的。
+
+2. 在子件中通过@Inject与父组件的类型注入父组件
+
+    ```ts
+        constructor(private commonService: CommonService,
+            private router: Router,
+            private errorTopicService: ErrorTopicService,
+            private sessionStorageService: SessionStorageService,
+            @Inject(IndexComponent) private parent: IndexComponent
+        ) { }
+    ```
+
+3. 在子组件中调用父组件的方法
+
+    ```ts
+        openSimulateDialog() {
+            this.parent.nav.openSimulateDialog();
+        }
+
+        closeSimulateDialog() {
+            this.parent.nav.closeSimulateDialog();
+        }
+    ```
+
 # 异步路由
 
 1. 一个angular应用体积会比较大，如果首次需要全部加载，则体验很不好。可以采用分模块的方式，根据路由地址按需异步加载。
