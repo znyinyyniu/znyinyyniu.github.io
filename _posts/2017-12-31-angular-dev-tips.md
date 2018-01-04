@@ -286,6 +286,33 @@ date: 2017-12-31
         }
     ```
 
+# 如何兼容IE浏览器
+
+1. angular-cli会为我们生成一个名为polyfills.ts，这是一个腻子粉文件，抹平浏览器各种兼容性问题
+
+2. 根据此文件的注释说明，放开IE浏览器所需要的各种腻子粉。
+
+# 如何在组件中为window、document、body对象绑定事件处理程序
+
+1. 使用@HostListener
+
+    ```ts
+        @HostListener('window:scroll', ['$event'])
+        onScroll($event: any) {
+            let x = document.documentElement.scrollTop || document.body.scrollTop;
+            if (x > 130) {
+                this.leftTreeAddClass = true;
+            } else {
+                this.leftTreeAddClass = false;
+            }
+        }
+
+        @HostListener('window:resize', ['$event'])
+        onResize($event: any): void {
+            this.setCartPosition();
+        }
+    ```
+
 # 异步路由
 
 1. 一个angular应用体积会比较大，如果首次需要全部加载，则体验很不好。可以采用分模块的方式，根据路由地址按需异步加载。
