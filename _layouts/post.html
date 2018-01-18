@@ -8,11 +8,20 @@
     <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/toc/0.3.2/toc.min.js"></script>
     <title>{{ page.title }}</title>
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?35738c606f02e5a1988032065dab29aa";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
 </head>
 
 <body>
 
-    <div id="toc">
+    <div id="toc" style="display:none;">
     </div>
 
     <header>
@@ -21,6 +30,7 @@
             <h2>{{ page.description }}</h2>
             <div>
                 <a href="/">文章列表</a>
+                <a id="ctrlTocLink" href="javascript:void(0);" style="float:right;">显示目录</a>
             </div>
         </div>
     </header>
@@ -36,6 +46,16 @@
             $('#toc').toc({
                 'container': '#main_content'
             });
+
+            $('#ctrlTocLink').click(function() {
+                $('#toc').toggle();
+                var text = $(this).text();
+                if (text == '显示目录') {
+                    $(this).text('隐藏目录');
+                } else if (text == '隐藏目录') {
+                    $(this).text('显示目录');
+                }
+            })
         })
     </script>
 
