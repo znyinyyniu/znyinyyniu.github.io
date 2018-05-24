@@ -105,22 +105,60 @@ date: 2018-05-19
 
 1. 字符串转枚举应直接使用valueOf方法
 2. code、value等转枚举的方法应直接定义在对应的枚举类中，以便将相关联的代码进行高内聚，从而提升可维护性
-3. angular组件的html中模板中应直接使用枚举，而不是写死字符串
+
+    <script src="https://gist.github.com/znyinyyniu/fc148bf0e7628c10fe892f1cede0b2b9.js"></script>
+
+3. angular组件的html模板中应直接使用枚举，而不是写死字符串
+
+    <script src="https://gist.github.com/znyinyyniu/f4c17c8a5398902b83b66a8a0c936dfd.js"></script>
+
+4. TypeScript开发过程中，如果有枚举，一定要用，而不是写死字符串
+
+    <script src="https://gist.github.com/znyinyyniu/c525d5e574e125f1a01f99ba1dcf3a7e.js"></script>
+    <script src="https://gist.github.com/znyinyyniu/3dbcd97137d40c5ca0495f8220d6ae0c.js"></script>
 
 ## 方法命名存在不必要的重复
 
 <script src="https://gist.github.com/znyinyyniu/347f5ee37af9cb8d2e0790843aec15b4.js"></script>
 <script src="https://gist.github.com/znyinyyniu/81fbf1ca88ed4cfbe2ab66a5a987c707.js"></script>
 
-## dao前缀
+## dao类中方法名的前缀
 
 dao类中方法命名可以使用固定前缀：find、insert、del、delete、update、upsert。
 
 <img src="../../../assets/images/code-review/dao.png">
 
-## 卫语句
+## sql语句拼接注意事项
 
-## 流水帐式的代码
+1. 使用StringBuffer或StringBuilder来拼接语句
+2. 以sql关键字作为换行的依据， 每行以空格开头。
+3. 不要使用select *,每行只写五个字段名， 超过五个后放到下一行， 且以tab开头。
+
+<script src="https://gist.github.com/znyinyyniu/0f990c003cd31b369baaa2fb372dc055.js"></script>
+
+## 以卫语句取代嵌套条件表达式
+
+需求：验证qq是否合法：5-15位，不能以0开头，全是数字
+
+<script src="https://gist.github.com/znyinyyniu/e064f25d771bd0d4aa67e9d08845f253.js"></script>
+<script src="https://gist.github.com/znyinyyniu/bc0ef796cd0bc049731b3cd1e9f762db.js"></script>
+
+## 流水帐式的编码风格
+
+1. 将代码组织成流水帐式的风格， 从而提升可读性与可维护性
+2. 什么是流水帐式的风格呢？ 意思就是一件事一件事的完成， 同样的事不要重复。 这样就能避免代码的层次嵌套， 提升可读性； 也能避免代码重复， 提升可维护性。
+
+<script src="https://gist.github.com/znyinyyniu/d7e5ef3a8cdba68a85936d627824bcbd.js"></script>
+
+代码流水帐为：
+1. 处理参数。
+2. 如果status=1， 获取数据， 生成resultMap。 否则， 以另一种方式获取数据， 生成resultMap。
+
+生成resultMap这件事被条件分支进行了重复， 代码可读性差， 代码不便于修改。
+
+<script src="https://gist.github.com/znyinyyniu/9238d15df784d82f7023e178b77e2582.js"></script>
+
+
     
 
 
