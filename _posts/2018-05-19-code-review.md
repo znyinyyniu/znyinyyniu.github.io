@@ -86,21 +86,39 @@ date: 2018-05-19
 ## 其他
 
 1. 虽然缓存是一种能防止过多高消耗请求的方式，但其本身也存在一些挑战。如果审查的代码使用了缓存，你应该关注一些常见的问题，如，不正确的缓存失效方式。
+2. 是否需要事务保证？是否可以保证最终一致性，业务是否可以接受？
 
 # 常见问题举例
+
+## 异常处理
+
+1. 异常链丢失
+2. 异常信息不记录到日志文件
+3. 没有必要的异常封装
+4. job定时任务中的异常未处理
+5. 线程异步执行过程中的异常未处理
+6. 吃掉异常
+
+<script src="https://gist.github.com/znyinyyniu/5d407887be23571fb18be3f72d7652e8.js"></script>
+
+## 枚举
+
+1. 字符串转枚举应直接使用valueOf方法
+2. code、value等转枚举的方法应直接定义在对应的枚举类中，以便将相关联的代码进行高内聚，从而提升可维护性
+3. angular组件的html中模板中应直接使用枚举，而不是写死字符串
 
 ## 方法命名存在不必要的重复
 
 <script src="https://gist.github.com/znyinyyniu/347f5ee37af9cb8d2e0790843aec15b4.js"></script>
 <script src="https://gist.github.com/znyinyyniu/81fbf1ca88ed4cfbe2ab66a5a987c707.js"></script>
 
-## 异常处理
-
 ## dao前缀
 
-## 卫语句
+dao类中方法命名可以使用固定前缀：find、insert、del、delete、update、upsert。
 
-## 枚举
+<img src="../../../assets/images/code-review/dao.png">
+
+## 卫语句
 
 ## 流水帐式的代码
     
