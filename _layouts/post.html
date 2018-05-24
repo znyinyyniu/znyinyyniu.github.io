@@ -9,6 +9,7 @@
     <script src="//cdn.bootcss.com/toc/0.3.2/toc.min.js"></script>
     <title>{{ page.title }}</title>
     <script>
+        // 百度统计
         var _hmt = _hmt || [];
         (function() {
             var hm = document.createElement("script");
@@ -47,6 +48,8 @@
                 'container': '#main_content'
             });
 
+            $('.toc-h2').hide();
+
             $('#ctrlTocLink').click(function() {
                 $('#toc').toggle();
                 var text = $(this).text();
@@ -55,7 +58,16 @@
                 } else if (text == '隐藏目录') {
                     $(this).text('显示目录');
                 }
-            })
+            });
+
+            $('.toc-h1').click(function() {
+                $('.toc-h2').hide();
+                var next = $(this).next();
+                while (next.prop('tagName') === 'LI' && next.hasClass('toc-h2')) {
+                    next.show();
+                    next = next.next();
+                }
+            });
         })
     </script>
 
