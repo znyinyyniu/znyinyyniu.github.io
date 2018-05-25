@@ -44,6 +44,11 @@ date: 2018-05-19
 ## 可读性和可维护性
 
 1. 字段、变量、参数、方法、类的命名是否真实反映它们所代表的事物, 是否能够望文生义?
+
+    《阿里巴巴java开发手册》
+
+    [Angular语法、约定和应用组织结构的官方指南](https://www.angular.cn/guide/styleguide)
+
 2. 所采用的术语、词汇是否一致？
 
 ## 安全
@@ -172,6 +177,10 @@ dao类中方法命名可以使用固定前缀：find、insert、del、delete、u
 2. 比较常用的有StringUtils、HashCodeBuilder、IOUtils、FileUtils等
 
 <script src="https://gist.github.com/znyinyyniu/9bbd07ba8c5d4576ff6ab492fc4809c2.js"></script>
+
+# 参考资料
+
+1. 《重构 改善既有代码的设计》
 
 
 
