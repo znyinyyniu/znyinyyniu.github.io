@@ -158,6 +158,25 @@ dao类中方法命名可以使用固定前缀：find、insert、del、delete、u
 
 <script src="https://gist.github.com/znyinyyniu/9238d15df784d82f7023e178b77e2582.js"></script>
 
+## PageTip应放在路由组件
+
+1. 建议PageTip组件放在路由组件中，不要放置在内部组件中
+2. 内部组件对外暴露三个事件（onScuccess、onWarn、onError），以向外传递组件内部的信息
+3. 这样就可以避免出现很多个PageTip组件实例
+
+<script src="https://gist.github.com/znyinyyniu/0adaaf9d6aff538998213612c50765c0.js"></script>
+
+## 尽量使用Apache Commons相关工具类
+
+1. Apache Commons Lang、Apacche Commons IO中提供了很多实用方便的工具类，应尽量使用
+2. 比较常用的有StringUtils、HashCodeBuilder、IOUtils、FileUtils等
+
+<script src="https://gist.github.com/znyinyyniu/9bbd07ba8c5d4576ff6ab492fc4809c2.js"></script>
+
+
+
+
+
 
     
 
