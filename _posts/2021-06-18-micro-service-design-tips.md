@@ -112,5 +112,12 @@ public interface ExamService{
 
 
 
+# 其他参考资料
+
+1. [什么是Service Mesh？](https://zhuanlan.zhihu.com/p/61901608)
+2. [Serverless架构](https://www.jdon.com/48109)
+
+
+
 
 
