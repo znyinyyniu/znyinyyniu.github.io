@@ -118,6 +118,122 @@ export class ChoiceBox extends Element {
 
 * 类设计
 
+``` c++
+namespace eiomr {
+
+	class Option {
+		
+	public:
+		Option(int idx);
+		~Option();
+
+	public:
+		int idx;
+		float fillArea;
+		int meanValue;
+		bool isSelected;
+
+	};
+
+	class Topic {
+
+	public:
+		Topic(int idx, int num,int optionCnt,int inIdx);
+		~Topic();
+
+	public:
+		vector<Option*> options;
+		int optionCnt;  
+		int idx;
+		int num;
+		int inIdx;
+
+	};
+
+	class Branch {
+
+	public:
+		Branch(int topicCnt, vector<int> ixList, vector<int> numList, cv::Mat* asImg);
+		~Branch();
+
+	public:
+		vector<Topic*> topics;
+		vector<int> startXVec;
+		vector<int> startYVec;
+		int left;
+		int top;
+		int width;
+		int height;
+		cv::Mat* asImg;
+
+	};
+
+}
+```
+
+# 建造者模式
+
+建造者模式（Builder Pattern）使用多个简单的对象一步一步构建成一个复杂的对象。
+
+## 扫描上传时异常检测
+
+* 场景
+
+1. 一张答题卡扫描上传后，要对其存在的异常进行检测（例如：图像残缺、定位点异常、准考证号异常、客观题异常、选作题异常等）
+2. 异常检测时需要结合很多方面的信息，具体如下：
+
+    ``` txt
+    基础信息（包含：考试、学科、是否手阅卡）
+    配置信息（包含：是否检测客观题异常、主观题0分是否算作异常等配置）
+    计划参加考试的学生信息
+    答题卡模板信息（包含：是否系统卡、图片数量、是否双张、双张卡每一张所包含的试题序号等）
+    试题信息（包含：客观题信息、选作题信息、主观题信息等）
+    ```
+
+3. 综合了各方面的信息后，就可以检测出一张答题卡所包含的各种异常了
+
+* 抽象
+
+1. 需要有一个异常检测工具，此工具能组合异常检测时所依赖的各种信息，能够检测各种异常
+2. 需要有一个异常检测工具的生成器，能获取到各面的信息，全方位管理异常检测工具的生成过程
+
+* 类设计
+
+``` java
+public class ScanDataProcessTool {
+
+    /**
+     * 当时考试是否是系统模板
+     */
+    private boolean isSystemTemplate = false;
+    private boolean isHandMarking = false;
+    /**
+     * 模板图片数量
+     */
+    private Integer imgCnt;
+
+    /**
+     * 用户信息，
+     */
+    private LoginData loginData;
+    private Map<String,String> configMap;
+
+
+    private Exam exam;
+    private ExamSession examSession;
+    private List<Student> planStudents;
+    private List<ExamTopic> topics;
+    private List<ExamTopic> chooseTopics;
+    private List<ExamTopic> objectTopics;
+    private List<ExamTopic> subjectTopics;
+    private Map<Integer, Integer> ixOpcnt;
+    private List<String> ixNum;
+    private Map<Integer,Set<Integer>> pageNumTopicIndexMap;
+}
+```
+
+<img src="../../../assets/images/design-pattern-actions/ScanDataProcessToolBuilder.png">
+
 # 参考资料
 
 [设计模式-菜鸟教程](https://www.runoob.com/design-pattern/design-pattern-tutorial.html)
