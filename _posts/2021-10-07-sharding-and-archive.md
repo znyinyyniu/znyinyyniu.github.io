@@ -5,17 +5,11 @@ description:
 date: 2021-10-07
 ---
 
-# 背景
-
-1. mysql数据库、单表记录超过7000万（机械硬盘）或单表记录超过1亿（SSD）、数据库查询性能明显下降
-2. 一场考试5000个学生，20题，打分记录为10万。mysql单表最高支持1000场考试
-3. 当前，一次期末考试，考试科次能达到4000场左右，打分记录为4亿，所以mysql单表是无法支撑的，需要进行分库处理
-
 # ShardingSphere HelloWorld
 
-1. 两个数据库db1、db2，都有一张表ei_exam，当exam_id为基数时落在db1，当exam_id为偶数时落在db2。
+* 两个数据库db1、db2，都有一张表ei_exam，当exam_id为基数时落在db1，当exam_id为偶数时落在db2。
 
-2. 获取DataSource
+* 获取DataSource
 
 ``` java
 public static final DataSource getDataSource() throws SQLException {
@@ -30,7 +24,7 @@ public static final DataSource getDataSource() throws SQLException {
 }
 ```
 
-3. 初始化物理数据源map
+* 初始化物理数据源map
 
 ``` java
 private static Map<String, DataSource> createDataSourceMap() throws SQLException {
@@ -76,7 +70,7 @@ private static DataSource initDataSource(String url, String userName, String pas
 }
 ```
 
-4. 定义分库分表规则配置
+* 定义分库分表规则配置
 
 ``` java
 ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
@@ -136,16 +130,142 @@ public class DatabaseShardingAlgorithm  implements ComplexKeysShardingAlgorithm 
 }
 ```
 
-5. 数据源更换为ShardingDataSource后，所有的分库分表逻辑都交由ShardingSphere处理了，对用户完全透明
+* 数据源更换为ShardingDataSource后，所有的分库分表逻辑都交由ShardingSphere处理了，对用户完全透明
+
+# 背景
+
+1. mysql数据库、单表记录超过7000万（机械硬盘）或单表记录超过1亿（SSD）、数据库查询性能明显下降
+2. 一场考试5000个学生，20题，打分记录为10万。mysql单表最高支持1000场考试
+3. 当前，一次期末考试，考试科次能达到4000场左右，打分记录为4亿，所以mysql单表是无法支撑的，需要进行分库处理
 
 # 分库方案
 
 1. 分成4个库，两个mysql实例承载，这种规模是无法承接两次大考的。
 2. 考试数据有个特点，最近一个月的数据访问会很频繁（热数据），一个月前的数据很少访问（冷数据）
 3. 因此，以自然年为维度，每年8个库，4个库用于存放热数据，4个库用于存放冷数据，有一个归档机制，每天定时对一个月前的数据进行归档
-4. 定期（每年、每个学期、市场有重大变化）对业务规模进行评估，根据业务规模对分库个数进行扩容。
+4. 定期（每年、每个学期、市场有重大拓展时）对业务规模进行评估，根据业务规模对分库个数进行扩容。
 5. 分库扩容后，最好不要进行数据迁移，简化扩容过程
 
+# 分库实现要点
+
+* 新建考试时，为每个学科指定数据源名称，并记录到一个数据库表中
+
+``` java
+/*
+    * 新建考试
+    */
+examId = examDao.insert(exam);
+
+for (String subjectId : subjects) {
+    shardingService.route(examId, Integer.parseInt(subjectId));
+}
+
+exam.setId(examId);
+
+examSessionDao.insert(exam, subjects);
+examDao.insertRooms(exam, roomList);
+```
+
+* 分库算法中，从数据表中获取某场考试的数据源名称。数据源名称一旦指定，几乎不会变化，所以采用缓存以提升性能。
+
+``` java
+String dbName = RouteCacheUtil.getInstance().getDBName(examId, subjectID);
+
+
+public String getDBName(Integer examId, Integer subjectId) {
+    String key = String.format("sharding:exam:dbName:%d:%d", examId, subjectId);
+    try {
+        return this.cache4DBName.get(key, () -> {
+            String dbName = shardingService.getDBName(examId,subjectId);
+            if (dbName == null) {
+                return "";
+            }
+            return dbName;
+        });
+    } catch (ExecutionException e) {
+        throw new CFSysException("cache4DBName.get异常。", e);
+    }
+}
+```
+
+* 采用这种静态路由策略，分库扩容时，不需要进行数据迁移，非常简单
+
+# 归档实现要点
+
+* 每天凌晨2:30开始进行数据归档，为避免归档业务对正常业务的影响，至凌晨5:30，要停止归档任务的运行
+
+``` java
+SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+Date t1 = sdf.parse(sdf.format(new Date()));
+Date t2 = sdf.parse(EtcdUtil.getV("/job/marking-archive-job/archiveEndTime", ""));
+if (t1.getTime() > t2.getTime()) {
+    logger.warn("数据归档已暂停");
+    break;
+}
+```
+
+* 数据归档过程中，若出现失败，则该场考试归档结束。该场考试数据可正常使用，也可以再次重新归档
+
+``` java
+// 数据进入归档库，采用先删除后插入的策略
+archiveService.archiveScanData(examId, subjectId);
+archiveService.archiveMarkingData(examId, subjectId);
+archiveService.archiveOnlineData(examId, subjectId);
+
+// 归档库插入完成后，原库数据删除采用事务控制
+deleteDataService.deleteData(examId, subjectId);
+
+// 归档失败后，清缓存、更改状态
+archiveService.archiveFail(examId, subjectId);
+```
+
+* 数据归档过程中，该场考试的数据不允许操作
+
+``` java
+// 获取某场考试对应分库数据源名称时，进行归档状态检测
+if (RouteCacheUtil.getInstance().getIsArchiving(examId, subjectId)) {
+    String msg = "数据正在归档中，大约5至20分钟后恢复。";
+    throw new CFBizException("888888", msg);
+}
+```
+
+* 数据归档完成后，要清空各dubbo服务部署结点本地的路由缓存
+
+``` java
+public void archiveDone(Integer examId, Integer subjectId) {
+    ArchiveRecord archiveRecord = new ArchiveRecord();
+    archiveRecord.setExamId(examId);
+    archiveRecord.setSubjectId(subjectId);
+    archiveRecord.setEndTime(new Date());
+    archiveRecord.setArchiveState(ArchiveState.success);
+    archiveRecordDao.update(archiveRecord);
+
+    shardingService.route2Archive(examId, subjectId);
+
+    // 数据库中写入清空分库路由缓存的消息
+    ClearShardingRouteCacheMsg msg = new ClearShardingRouteCacheMsg();
+    msg.setCreateTime(new Date());
+    msg.setExamId(examId);
+    msg.setSubjectId(subjectId);
+    clearShardingRouteCacheMsgDao.insert(msg);
+}
+
+// dubbo服务中使用定时任务获取消息并清空本地缓存
+private static void schedule() throws SchedulerException {
+    SchedulerFactory sf = new StdSchedulerFactory();
+    Scheduler sched = sf.getScheduler();
+
+    JobDetail job = newJob(ClearShardingRouteCacheJob.class).withIdentity("clearShardingRouteCacheJob", "group1").build();
+
+    String cronExpression = "0/10 * * * * ?";
+    CronTrigger trigger = newTrigger().withIdentity("clearShardingRouteCacheJobTrigger", "group1")
+            .withSchedule(cronSchedule(cronExpression)).build();
+
+    sched.scheduleJob(job, trigger);
+
+    sched.start();
+}
+```
 
 
 # 参考资料
