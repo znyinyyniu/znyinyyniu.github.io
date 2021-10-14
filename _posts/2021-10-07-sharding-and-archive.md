@@ -267,6 +267,53 @@ private static void schedule() throws SchedulerException {
 }
 ```
 
+# JDBC操作数据库的基本步骤
+
+``` java
+// 1、获取数据库连接  
+conn = datasource.getConnection();  
+// 2、获取数据库操作对象  
+stmt = conn.createStatement();  
+// 3、定义操作的SQL语句  
+String sql = "select * from user where id = 100";  
+// 4、执行数据库操作  
+rs = stmt.executeQuery(sql);  
+// 5、获取并操作结果集  
+while (rs.next()) {  
+    System.out.println(rs.getInt("id"));  
+    System.out.println(rs.getString("name"));  
+}  
+```
+
+# ShardingSphere源码剖析
+
+1. ShardingDataSource类
+
+        实现DataSource接口
+        管理物理数据源、分库分表规则
+        重写getConnection方法，返回ShardingConnection实例
+
+2. ShardingConnection类
+
+        重写prepareStatement方法，返回ShardingPreparedStatement实例
+
+3. ShardingPreparedStatement类
+
+        重写executeQuery方法
+            sqlRoute();
+            initPreparedStatementExecutor();
+            preparedStatementExecutor.executeQuery()
+                获取物理数据源
+                JDBC操作数据库的基本步骤
+
+# ShardingSphere内核剖析
+
+[内核剖析](https://shardingsphere.apache.org/document/legacy/3.x/document/cn/features/sharding/principle/)
+
+# ShardingSphere单元测试剖析
+
+
+
 
 # 参考资料
 
