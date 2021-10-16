@@ -312,7 +312,50 @@ while (rs.next()) {
 
 # ShardingSphere单元测试剖析
 
+* @RunWith(Parameterized.class)，参数化的形式批量生成单元测试类
 
+``` java
+public class ParametersDemo {
+    private Integer examId;
+    private String examName;
+
+    public ParametersDemo(Integer examId,String examName){
+        this.examId=examId;
+        this.examName=examName;
+    }
+
+    @Parameters(name="{0} -> {1}")
+    public static Collection<Object[]> getTestParameters(){
+        List<Object[]> parameters=new ArrayList<>();
+
+        Object[] a=new Object[2];
+        a[0]=1;
+        a[1]="exam"+1;
+        parameters.add(a);
+
+        Object[] b=new Object[2];
+        b[0]=2;
+        b[1]="exam"+2;
+        parameters.add(b);
+
+        return parameters;
+    }
+
+    @Test
+    public void test1(){
+        Assert.assertEquals("exam"+this.examId,this.examName);
+    }
+
+    @Test
+    public void test2(){
+        Assert.assertEquals("aaa"+this.examId,this.examName);
+    }
+}
+```
+
+* IntegrateSupportedSQLParsingTest类，分别从两种xml文件中加载要进行解析单元测试的sql语句及解析后的比对结果，通过参数化的方式进行批量单元测试。
+
+* 分析sql解析中词法分析的单元测试代码
 
 
 # 参考资料
