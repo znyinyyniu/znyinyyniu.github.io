@@ -35,7 +35,9 @@ date: 2021-08-07
 
 * 类设计
 
-<img src="../../../assets/images/design-pattern-actions/answersheet-class-diagram.png">
+<div style="padding:10px;background-color:white;">
+  <img src="../../../assets/images/design-pattern-actions/answersheet-class-diagram.png">
+</div>
 
 ``` typescript
 
@@ -341,8 +343,9 @@ public class ScanExceptionServiceAgent {
 4. 这样组织代码后，结构清晰，可以团队进行分工协作，处理步骤可灵活插拔，处理步骤职责单一，研发效率与质量得以保障
 
 * 类设计
-
-<img src="../../../assets/images/design-pattern-actions/word2html-class-diagram.png">
+<div style="padding:10px;background-color:white;">
+  <img src="../../../assets/images/design-pattern-actions/word2html-class-diagram.png">
+</div>
 
 ``` java
 {% raw %}
