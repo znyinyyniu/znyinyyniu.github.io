@@ -138,7 +138,7 @@ public class DatabaseShardingAlgorithm  implements ComplexKeysShardingAlgorithm 
 2. 一场考试5000个学生，20题，打分记录为10万。mysql单表最高支持1000场考试
 3. 当前，一次期末考试，考试科次能达到4000场左右，打分记录为4亿，所以mysql单表是无法支撑的，需要进行分库处理
 
-<img src="../../../assets/images/sharding-and-archive/marking-ER-diagram.png">
+<img style="padding:10px;" src="../../../assets/images/sharding-and-archive/marking-ER-diagram.png">
 
 # 分库方案
 
