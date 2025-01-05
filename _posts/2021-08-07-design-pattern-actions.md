@@ -35,6 +35,8 @@ date: 2021-08-07
 
 * 类设计
 
+<img src="../../../assets/images/design-pattern-actions/answersheet-class-diagram.png">
+
 ``` typescript
 
 // 所有结构元件的基类
