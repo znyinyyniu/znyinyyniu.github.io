@@ -342,6 +342,8 @@ public class ScanExceptionServiceAgent {
 
 * 类设计
 
+<img src="../../../assets/images/design-pattern-actions/answersheet-class-diagram.png">
+
 ``` java
 {% raw %}
 /**
