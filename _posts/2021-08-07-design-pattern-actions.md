@@ -342,7 +342,7 @@ public class ScanExceptionServiceAgent {
 
 * 类设计
 
-<img src="../../../assets/images/design-pattern-actions/answersheet-class-diagram.png">
+<img src="../../../assets/images/design-pattern-actions/word2html-class-diagram.png">
 
 ``` java
 {% raw %}
